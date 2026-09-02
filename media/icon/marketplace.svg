@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="atlas-plate" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="#2ACFA3"/>
+      <stop offset="1" stop-color="#0B7A61"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" fill="url(#atlas-plate)"/>
+  <path d="M128 40 Q141 115 216 128 Q141 141 128 216 Q115 141 40 128 Q115 115 128 40 Z" fill="#ffffff"/>
+</svg>

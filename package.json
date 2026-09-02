@@ -1,0 +1,329 @@
+{
+  "name": "markdown-atlas",
+  "displayName": "Markdown Atlas",
+  "description": "A themed Markdown preview for VS Code — beautiful typography, live scroll sync, math and code highlighting.",
+  "version": "0.3.2",
+  "publisher": "decemy",
+  "license": "MIT",
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#0B7A61",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Decem-Y/markdown-atlas.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Decem-Y/markdown-atlas/issues"
+  },
+  "homepage": "https://github.com/Decem-Y/markdown-atlas#readme",
+  "pricing": "Free",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "markdown",
+    "preview",
+    "theme",
+    "typography",
+    "katex"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onWebviewPanel:markdownAtlas.preview"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "markdownAtlas.showPreview",
+        "title": "Open Preview",
+        "category": "Markdown Atlas",
+        "icon": {
+          "light": "./media/icon/preview-light.svg",
+          "dark": "./media/icon/preview-dark.svg"
+        }
+      },
+      {
+        "command": "markdownAtlas.showPreviewToSide",
+        "title": "Open Preview to the Side",
+        "category": "Markdown Atlas",
+        "icon": {
+          "light": "./media/icon/preview-light.svg",
+          "dark": "./media/icon/preview-dark.svg"
+        }
+      },
+      {
+        "command": "markdownAtlas.selectTheme",
+        "title": "Select Preview Theme",
+        "category": "Markdown Atlas"
+      },
+      {
+        "command": "markdownAtlas.refreshPreview",
+        "title": "Refresh Preview",
+        "category": "Markdown Atlas"
+      },
+      {
+        "command": "markdownAtlas.exportHtml",
+        "title": "Export as HTML",
+        "category": "Markdown Atlas",
+        "icon": "$(save)"
+      },
+      {
+        "command": "markdownAtlas.editCustomCss",
+        "title": "Edit Custom CSS",
+        "category": "Markdown Atlas"
+      },
+      {
+        "command": "markdownAtlas.exportPdf",
+        "title": "Export as PDF",
+        "category": "Markdown Atlas"
+      },
+      {
+        "command": "markdownAtlas.export",
+        "title": "Export…",
+        "category": "Markdown Atlas",
+        "icon": "$(save)"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "markdownAtlas.showPreview",
+          "when": "editorLangId == markdown"
+        },
+        {
+          "command": "markdownAtlas.showPreviewToSide",
+          "when": "editorLangId == markdown"
+        },
+        {
+          "command": "markdownAtlas.refreshPreview",
+          "when": "editorLangId == markdown || activeWebviewPanelId == markdownAtlas.preview"
+        },
+        {
+          "command": "markdownAtlas.exportHtml",
+          "when": "editorLangId == markdown || activeWebviewPanelId == markdownAtlas.preview"
+        },
+        {
+          "command": "markdownAtlas.exportPdf",
+          "when": "editorLangId == markdown || activeWebviewPanelId == markdownAtlas.preview"
+        },
+        {
+          "command": "markdownAtlas.export",
+          "when": "editorLangId == markdown || activeWebviewPanelId == markdownAtlas.preview"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "markdownAtlas.showPreviewToSide",
+          "when": "resourceLangId == markdown",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "markdownAtlas.showPreviewToSide",
+          "when": "resourceLangId == markdown",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "markdownAtlas.showPreview",
+          "when": "resourceLangId == markdown",
+          "group": "navigation"
+        },
+        {
+          "command": "markdownAtlas.export",
+          "when": "resourceLangId == markdown",
+          "group": "navigation"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "markdownAtlas.showPreviewToSide",
+        "key": "ctrl+k a",
+        "mac": "cmd+k a",
+        "when": "editorLangId == markdown"
+      }
+    ],
+    "configuration": {
+      "title": "Markdown Atlas",
+      "properties": {
+        "markdownAtlas.theme": {
+          "type": "string",
+          "default": "editor",
+          "enum": [
+            "editor",
+            "wechat",
+            "macos",
+            "academic",
+            "notion",
+            "medium",
+            "tech-blog",
+            "clean-blue"
+          ],
+          "enumDescriptions": [
+            "Follows the current VS Code color theme (light and dark).",
+            "WeChat Classic — centred warm headings, blue accents.",
+            "macOS Minimal — neutral greys, generous whitespace.",
+            "Academic Paper — serif body, numbered feel, tight tables.",
+            "Notion Clean — flat sans-serif, soft dividers.",
+            "Medium Editorial — large serif body, wide measure.",
+            "Tech Blog — compact sans-serif, dense and readable.",
+            "Clean Blue — light blue accents, business-report look."
+          ],
+          "description": "Visual theme used by the Markdown Atlas preview."
+        },
+        "markdownAtlas.preview.fontSize": {
+          "type": "number",
+          "default": 16,
+          "minimum": 10,
+          "maximum": 32,
+          "description": "Base body font size (px) in the preview. Headings and code scale relative to it."
+        },
+        "markdownAtlas.preview.lineWidth": {
+          "type": "number",
+          "default": 760,
+          "minimum": 360,
+          "maximum": 1600,
+          "description": "Maximum width (px) of the article column in the preview."
+        },
+        "markdownAtlas.preview.scrollPreviewWithEditor": {
+          "type": "boolean",
+          "default": true,
+          "description": "Scroll the preview to keep up with the editor's visible range."
+        },
+        "markdownAtlas.preview.scrollEditorWithPreview": {
+          "type": "boolean",
+          "default": true,
+          "description": "Scroll the editor to keep up with the preview's visible range."
+        },
+        "markdownAtlas.preview.doubleClickToSwitchToEditor": {
+          "type": "boolean",
+          "default": false,
+          "description": "Double-click in the preview to jump to that line in the editor. Off by default: double-click normally selects a word, and hijacking it makes text hard to copy. The toolbar's back-arrow button jumps to the editor without a gesture."
+        },
+        "markdownAtlas.preview.showToolbar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the preview toolbar (theme picker, outline, zoom)."
+        },
+        "markdownAtlas.preview.tableDisplay": {
+          "type": "string",
+          "default": "scroll",
+          "enum": [
+            "scroll",
+            "expand"
+          ],
+          "enumDescriptions": [
+            "A wide table scrolls sideways inside the article column.",
+            "A wide table is shown in full; the page scrolls sideways instead."
+          ],
+          "description": "How wide tables behave. The preview toolbar toggles this per document."
+        },
+        "markdownAtlas.math.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Render $...$ and $$...$$ math with KaTeX."
+        },
+        "markdownAtlas.preview.frontMatter": {
+          "type": "string",
+          "default": "hide",
+          "enum": [
+            "hide",
+            "card"
+          ],
+          "enumDescriptions": [
+            "Hide the YAML front matter block entirely.",
+            "Render the YAML front matter as a small metadata card above the document."
+          ],
+          "description": "How to display YAML front matter in the preview."
+        },
+        "markdownAtlas.customCss": {
+          "type": "string",
+          "default": "",
+          "editPresentation": "multilineText",
+          "markdownDescription": "CSS layered on top of the active theme. Prefix every rule with `.atlas-content`, e.g. `.atlas-content h2 { color: #07c160; }`. Editable from the preview's Style panel."
+        },
+        "markdownAtlas.export.outputPath": {
+          "type": "string",
+          "default": "",
+          "description": "Default destination for exports. Absolute, or relative to the Markdown file. A value ending in a file extension is used as the filename (the extension is forced to match the format); anything else is treated as a directory. Empty writes beside the source file. The preview's export field overrides this per export."
+        },
+        "markdownAtlas.export.embedImages": {
+          "type": "boolean",
+          "default": true,
+          "description": "Inline local images into the exported HTML as data URIs, so the file stands on its own."
+        },
+        "markdownAtlas.export.chromePath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the Chrome, Edge or Chromium executable used for PDF export. Empty auto-detects the usual install locations."
+        },
+        "markdownAtlas.export.pdf.pageSize": {
+          "type": "string",
+          "default": "A4",
+          "enum": [
+            "A4",
+            "A3",
+            "A5",
+            "Letter",
+            "Legal",
+            "Tabloid"
+          ],
+          "description": "Page size for PDF export."
+        },
+        "markdownAtlas.export.pdf.margin": {
+          "type": "string",
+          "default": "16mm",
+          "description": "Page margin for PDF export, as a CSS length (e.g. 16mm, 0.6in, or \"20mm 15mm\")."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "vsix": "vsce package",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "dependencies": {
+    "@vscode/markdown-it-katex": "^1.1.2",
+    "highlight.js": "^11.12.0",
+    "katex": "^0.16.11",
+    "markdown-it": "^14.1.0"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "24.x",
+    "@types/vscode": "^1.90.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.0.0",
+    "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.28.1",
+    "eslint": "^10.5.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.1"
+  },
+  "overrides": {
+    "diff": "^8.0.4",
+    "serialize-javascript": "^7.0.6"
+  }
+}

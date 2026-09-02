@@ -1,0 +1,26 @@
+/* Markdown Atlas — overrides for exported, standalone HTML.
+ *
+ * The exported page reuses base.css, so the preview-only chrome selectors are
+ * simply never matched. What does need replacing is the scroll column: the
+ * preview's `.atlas-page` leaves 60vh of trailing space so the last line can be
+ * scrolled to the top for sync, which would read as a bug in a saved file. */
+
+.atlas-export-page {
+	padding: 8px 24px 48px;
+}
+
+.atlas-export-page .atlas-content {
+	padding-top: 24px;
+}
+
+@media print {
+	.atlas-export-page {
+		padding: 0;
+	}
+
+	.atlas-code,
+	.atlas-content table,
+	.atlas-content figure {
+		break-inside: avoid;
+	}
+}

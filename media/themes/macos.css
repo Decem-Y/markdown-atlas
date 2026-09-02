@@ -1,0 +1,72 @@
+/* macOS Minimal — neutral greys, rounded surfaces, generous whitespace. */
+
+:root {
+	--atlas-bg: #ffffff;
+	--atlas-fg: #1d1d1f;
+	--atlas-muted: #6e6e73;
+	--atlas-border: #e5e5ea;
+	--atlas-accent: #0071e3;
+	--atlas-code-bg: #f5f5f7;
+	--atlas-code-border: #e5e5ea;
+	--atlas-body-font: -apple-system, 'SF Pro Text', 'Helvetica Neue', 'PingFang SC',
+		Arial, sans-serif;
+	--atlas-display-font: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+}
+
+.atlas-content {
+	color: var(--atlas-fg);
+	font-family: var(--atlas-body-font);
+	line-height: 1.7;
+	-webkit-font-smoothing: antialiased;
+}
+
+.atlas-content h1,
+.atlas-content h2,
+.atlas-content h3 {
+	font-family: var(--atlas-display-font);
+	color: var(--atlas-fg);
+}
+
+.atlas-content h1 { font-size: 2em; font-weight: 700; letter-spacing: -0.03em; margin: 0.6em 0 0.4em; }
+.atlas-content h2 { font-size: 1.4em; font-weight: 700; letter-spacing: -0.02em; margin: 1.8em 0 0.6em; }
+.atlas-content h3 { font-size: 1.1em; font-weight: 600; margin: 1.4em 0 0.4em; }
+.atlas-content h4,
+.atlas-content h5,
+.atlas-content h6 { font-size: 1em; font-weight: 600; color: var(--atlas-muted); margin: 1.2em 0 0.3em; }
+
+.atlas-content p { margin: 0.9em 0; }
+.atlas-content strong { font-weight: 600; color: var(--atlas-accent); }
+.atlas-content a { color: var(--atlas-accent); text-decoration: none; }
+.atlas-content a:hover { text-decoration: underline; }
+
+.atlas-content blockquote {
+	margin: 1.5em 0;
+	padding: 1em 1.4em;
+	background: var(--atlas-code-bg);
+	border-radius: 12px;
+	color: #3d3d3f;
+}
+
+.atlas-content blockquote > :first-child { margin-top: 0; }
+.atlas-content blockquote > :last-child { margin-bottom: 0; }
+
+.atlas-content :not(pre) > code {
+	background: var(--atlas-code-bg);
+	padding: 2px 7px;
+	border-radius: 6px;
+	font-family: var(--atlas-mono-font);
+	font-size: 0.85em;
+	color: var(--atlas-fg);
+}
+
+.atlas-content table { width: 100%; margin: 1.5em 0; border-radius: 8px; overflow: hidden; }
+.atlas-content th,
+.atlas-content td { border: none; border-bottom: 1px solid var(--atlas-border); padding: 10px 14px; }
+.atlas-content th { background: var(--atlas-code-bg); font-weight: 600; text-align: left; }
+.atlas-content tr:last-child td { border-bottom: none; }
+
+.atlas-content ul,
+.atlas-content ol { padding-left: 1.6em; }
+
+.atlas-content hr { border: none; border-top: 1px solid var(--atlas-border); margin: 2em 0; }
+.atlas-content img { border-radius: 8px; }

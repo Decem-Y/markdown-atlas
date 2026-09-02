@@ -1,0 +1,105 @@
+/* Markdown Atlas — highlight.js token palettes.
+ *
+ * The preview host may be running a dark VS Code theme while the article theme
+ * is a fixed light page (or the reverse), so token colours cannot be inherited
+ * from the editor. Each theme declares a `codeScheme`; the client resolves it
+ * (`auto` follows VS Code) onto `body[data-code-scheme]`. */
+
+/* ── GitHub Light ──────────────────────────────────────────────────────── */
+
+body[data-code-scheme='light'] .hljs-doctag,
+body[data-code-scheme='light'] .hljs-keyword,
+body[data-code-scheme='light'] .hljs-meta .hljs-keyword,
+body[data-code-scheme='light'] .hljs-template-tag,
+body[data-code-scheme='light'] .hljs-template-variable,
+body[data-code-scheme='light'] .hljs-type,
+body[data-code-scheme='light'] .hljs-variable.language_ { color: #cf222e; }
+
+body[data-code-scheme='light'] .hljs-title,
+body[data-code-scheme='light'] .hljs-title.class_,
+body[data-code-scheme='light'] .hljs-title.class_.inherited__,
+body[data-code-scheme='light'] .hljs-title.function_ { color: #8250df; }
+
+body[data-code-scheme='light'] .hljs-attr,
+body[data-code-scheme='light'] .hljs-attribute,
+body[data-code-scheme='light'] .hljs-literal,
+body[data-code-scheme='light'] .hljs-meta,
+body[data-code-scheme='light'] .hljs-number,
+body[data-code-scheme='light'] .hljs-operator,
+body[data-code-scheme='light'] .hljs-variable,
+body[data-code-scheme='light'] .hljs-selector-attr,
+body[data-code-scheme='light'] .hljs-selector-class,
+body[data-code-scheme='light'] .hljs-selector-id { color: #0550ae; }
+
+body[data-code-scheme='light'] .hljs-regexp,
+body[data-code-scheme='light'] .hljs-string,
+body[data-code-scheme='light'] .hljs-meta .hljs-string { color: #0a3069; }
+
+body[data-code-scheme='light'] .hljs-built_in,
+body[data-code-scheme='light'] .hljs-symbol { color: #953800; }
+
+body[data-code-scheme='light'] .hljs-comment,
+body[data-code-scheme='light'] .hljs-code,
+body[data-code-scheme='light'] .hljs-formula { color: #6e7781; }
+
+body[data-code-scheme='light'] .hljs-name,
+body[data-code-scheme='light'] .hljs-quote,
+body[data-code-scheme='light'] .hljs-selector-tag,
+body[data-code-scheme='light'] .hljs-selector-pseudo { color: #116329; }
+
+body[data-code-scheme='light'] .hljs-subst { color: #24292f; }
+body[data-code-scheme='light'] .hljs-section { color: #0550ae; font-weight: 700; }
+body[data-code-scheme='light'] .hljs-bullet { color: #735c0f; }
+body[data-code-scheme='light'] .hljs-addition { color: #116329; background: #dafbe1; }
+body[data-code-scheme='light'] .hljs-deletion { color: #82071e; background: #ffebe9; }
+
+/* ── GitHub Dark ───────────────────────────────────────────────────────── */
+
+body[data-code-scheme='dark'] .hljs-doctag,
+body[data-code-scheme='dark'] .hljs-keyword,
+body[data-code-scheme='dark'] .hljs-meta .hljs-keyword,
+body[data-code-scheme='dark'] .hljs-template-tag,
+body[data-code-scheme='dark'] .hljs-template-variable,
+body[data-code-scheme='dark'] .hljs-type,
+body[data-code-scheme='dark'] .hljs-variable.language_ { color: #ff7b72; }
+
+body[data-code-scheme='dark'] .hljs-title,
+body[data-code-scheme='dark'] .hljs-title.class_,
+body[data-code-scheme='dark'] .hljs-title.class_.inherited__,
+body[data-code-scheme='dark'] .hljs-title.function_ { color: #d2a8ff; }
+
+body[data-code-scheme='dark'] .hljs-attr,
+body[data-code-scheme='dark'] .hljs-attribute,
+body[data-code-scheme='dark'] .hljs-literal,
+body[data-code-scheme='dark'] .hljs-meta,
+body[data-code-scheme='dark'] .hljs-number,
+body[data-code-scheme='dark'] .hljs-operator,
+body[data-code-scheme='dark'] .hljs-variable,
+body[data-code-scheme='dark'] .hljs-selector-attr,
+body[data-code-scheme='dark'] .hljs-selector-class,
+body[data-code-scheme='dark'] .hljs-selector-id { color: #79c0ff; }
+
+body[data-code-scheme='dark'] .hljs-regexp,
+body[data-code-scheme='dark'] .hljs-string,
+body[data-code-scheme='dark'] .hljs-meta .hljs-string { color: #a5d6ff; }
+
+body[data-code-scheme='dark'] .hljs-built_in,
+body[data-code-scheme='dark'] .hljs-symbol { color: #ffa657; }
+
+body[data-code-scheme='dark'] .hljs-comment,
+body[data-code-scheme='dark'] .hljs-code,
+body[data-code-scheme='dark'] .hljs-formula { color: #8b949e; }
+
+body[data-code-scheme='dark'] .hljs-name,
+body[data-code-scheme='dark'] .hljs-quote,
+body[data-code-scheme='dark'] .hljs-selector-tag,
+body[data-code-scheme='dark'] .hljs-selector-pseudo { color: #7ee787; }
+
+body[data-code-scheme='dark'] .hljs-subst { color: #c9d1d9; }
+body[data-code-scheme='dark'] .hljs-section { color: #1f6feb; font-weight: 700; }
+body[data-code-scheme='dark'] .hljs-bullet { color: #f2cc60; }
+body[data-code-scheme='dark'] .hljs-addition { color: #aff5b4; background: #033a16; }
+body[data-code-scheme='dark'] .hljs-deletion { color: #ffdcd7; background: #67060c; }
+
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: 700; }

@@ -1,0 +1,486 @@
+/* Markdown Atlas — preview shell.
+ *
+ * Everything here belongs to the live preview and nothing else: the toolbar,
+ * the outline and Style panels, the scroll column, the toast, and the display
+ * toggles those controls drive. `Export as HTML` inlines base.css but not this
+ * file, so a saved article carries no rules it can never match. */
+
+:root {
+	/* Measured from the real toolbar at runtime — it wraps on a narrow panel. */
+	--atlas-toolbar-h: 38px;
+	--atlas-panel-w: 260px;
+	--atlas-panel-wide-w: 380px;
+}
+
+/* ── toolbar ─────────────────────────────────────────────────────────────
+   Uses VS Code's own theme colours rather than the article theme, so it reads
+   as part of the editor no matter which page style is selected. It wraps on a
+   narrow panel, so its height is measured at runtime into --atlas-toolbar-h. */
+
+.atlas-toolbar {
+	position: sticky;
+	top: 0;
+	z-index: 20;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 10px;
+	min-height: 28px;
+	padding: 5px 12px;
+	background: var(--vscode-editorWidget-background, #f3f3f3);
+	color: var(--vscode-editorWidget-foreground, inherit);
+	border-bottom: 1px solid var(--vscode-editorWidget-border, rgba(128, 128, 128, 0.3));
+	font-size: 12px;
+	user-select: none;
+}
+
+.atlas-toolbar[hidden] {
+	display: none;
+}
+
+.atlas-toolbar-spacer {
+	flex: 1 1 0;
+	min-width: 0;
+}
+
+.atlas-toolbar-group {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	padding: 2px 5px;
+	background: rgba(128, 128, 128, 0.08);
+	border: 1px solid rgba(128, 128, 128, 0.14);
+	border-radius: 7px;
+}
+
+.atlas-field {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+}
+
+.atlas-field-label {
+	color: var(--vscode-descriptionForeground, #777);
+}
+
+.atlas-toolbar select {
+	max-width: 220px;
+	padding: 2px 6px;
+	font: inherit;
+	color: var(--vscode-dropdown-foreground, inherit);
+	background: var(--vscode-dropdown-background, #fff);
+	border: 1px solid var(--vscode-dropdown-border, rgba(128, 128, 128, 0.4));
+	border-radius: 4px;
+}
+
+.atlas-tool {
+	padding: 3px 9px;
+	font: inherit;
+	white-space: nowrap;
+	color: var(--vscode-button-secondaryForeground, inherit);
+	background: var(--vscode-button-secondaryBackground, rgba(128, 128, 128, 0.16));
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.atlas-tool[hidden] {
+	display: none;
+}
+
+.atlas-tool:hover {
+	background: var(--vscode-button-secondaryHoverBackground, rgba(128, 128, 128, 0.28));
+}
+
+.atlas-tool:focus-visible {
+	outline: 1px solid var(--vscode-focusBorder, #0078d4);
+	outline-offset: 1px;
+}
+
+.atlas-tool.is-active {
+	color: var(--vscode-button-foreground, #fff);
+	background: var(--vscode-button-background, #0078d4);
+}
+
+.atlas-tool-primary {
+	color: var(--vscode-button-foreground, #fff);
+	background: var(--vscode-button-background, #0078d4);
+}
+
+.atlas-tool-primary:hover {
+	background: var(--vscode-button-hoverBackground, #026ec1);
+}
+
+.atlas-zoom-level {
+	min-width: 48px;
+	font-variant-numeric: tabular-nums;
+}
+
+/* ── right-hand panels (outline / custom CSS) ────────────────────────────
+   Both live in the same rail and only one is open at a time. */
+
+.atlas-panel {
+	position: fixed;
+	top: var(--atlas-toolbar-h);
+	right: 0;
+	bottom: 0;
+	z-index: 15;
+	display: flex;
+	flex-direction: column;
+	width: var(--atlas-panel-w);
+	background: var(--vscode-sideBar-background, var(--vscode-editorWidget-background, #f3f3f3));
+	color: var(--vscode-foreground, inherit);
+	border-left: 1px solid var(--vscode-editorWidget-border, rgba(128, 128, 128, 0.3));
+	font-size: 12px;
+}
+
+.atlas-panel[hidden] {
+	display: none;
+}
+
+.atlas-panel-wide {
+	width: var(--atlas-panel-wide-w);
+	max-width: calc(100% - 160px);
+}
+
+.atlas-panel-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 8px 8px 8px 12px;
+	font-weight: 600;
+	border-bottom: 1px solid var(--vscode-editorWidget-border, rgba(128, 128, 128, 0.25));
+}
+
+.atlas-panel-close {
+	padding: 0 6px;
+	font-size: 15px;
+	line-height: 1.4;
+	color: inherit;
+	background: transparent;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	opacity: 0.7;
+}
+
+.atlas-panel-close:hover {
+	background: var(--vscode-toolbar-hoverBackground, rgba(128, 128, 128, 0.2));
+	opacity: 1;
+}
+
+.atlas-panel-body {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 10px 12px 14px;
+	overflow-y: auto;
+}
+
+.atlas-panel-hint,
+.atlas-panel-note {
+	margin: 0;
+	line-height: 1.6;
+	color: var(--vscode-descriptionForeground, #777);
+}
+
+.atlas-panel-note {
+	font-size: 11px;
+}
+
+.atlas-panel-hint code,
+.atlas-panel-note code,
+.atlas-cheatsheet code {
+	font-family: var(--atlas-mono-font);
+	font-size: 0.95em;
+	color: var(--vscode-textPreformat-foreground, #0550ae);
+}
+
+.atlas-cheatsheet {
+	padding: 6px 10px;
+	background: var(--vscode-textCodeBlock-background, rgba(128, 128, 128, 0.1));
+	border-radius: 6px;
+}
+
+.atlas-cheatsheet summary {
+	cursor: pointer;
+	color: var(--vscode-descriptionForeground, #777);
+}
+
+.atlas-cheatsheet-body {
+	margin-top: 6px;
+	line-height: 1.9;
+	color: var(--vscode-descriptionForeground, #777);
+}
+
+#atlas-css-input {
+	min-height: 220px;
+	padding: 8px 10px;
+	resize: vertical;
+	font-family: var(--atlas-mono-font);
+	font-size: 12px;
+	line-height: 1.6;
+	tab-size: 2;
+	color: var(--vscode-input-foreground, inherit);
+	background: var(--vscode-input-background, #fff);
+	border: 1px solid var(--vscode-input-border, rgba(128, 128, 128, 0.35));
+	border-radius: 5px;
+}
+
+#atlas-css-input:focus {
+	outline: 1px solid var(--vscode-focusBorder, #0078d4);
+	outline-offset: -1px;
+}
+
+.atlas-panel-actions {
+	display: flex;
+	gap: 8px;
+}
+
+/* ── outline ─────────────────────────────────────────────────────────── */
+
+.atlas-outline {
+	flex: 1;
+	padding: 8px 4px 24px;
+	overflow-y: auto;
+}
+
+.atlas-outline-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.atlas-outline-item a {
+	display: block;
+	padding: 3px 10px;
+	color: var(--vscode-foreground, inherit);
+	text-decoration: none;
+	border-left: 2px solid transparent;
+	border-radius: 0 3px 3px 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.atlas-outline-item a:hover {
+	background: var(--vscode-list-hoverBackground, rgba(128, 128, 128, 0.16));
+}
+
+.atlas-outline-item.is-active a {
+	color: var(--vscode-textLink-activeForeground, var(--vscode-textLink-foreground, #0078d4));
+	background: var(--vscode-list-inactiveSelectionBackground, rgba(128, 128, 128, 0.14));
+	border-left-color: var(--vscode-textLink-foreground, #0078d4);
+}
+
+.atlas-outline-h1 a { padding-left: 10px; font-weight: 600; }
+.atlas-outline-h2 a { padding-left: 22px; }
+.atlas-outline-h3 a { padding-left: 34px; opacity: 0.9; }
+.atlas-outline-h4 a { padding-left: 46px; opacity: 0.8; }
+.atlas-outline-h5 a { padding-left: 58px; opacity: 0.75; }
+.atlas-outline-h6 a { padding-left: 70px; opacity: 0.7; }
+
+.atlas-outline-empty {
+	margin: 8px 12px;
+	color: var(--vscode-descriptionForeground, #777);
+}
+
+/* ── toast ───────────────────────────────────────────────────────────── */
+
+.atlas-toast {
+	position: fixed;
+	right: 16px;
+	bottom: 16px;
+	z-index: 40;
+	max-width: 320px;
+	padding: 8px 14px;
+	font-size: 12px;
+	color: var(--vscode-notifications-foreground, inherit);
+	background: var(--vscode-notifications-background, #f3f3f3);
+	border: 1px solid var(--vscode-notificationCenter-border, rgba(128, 128, 128, 0.3));
+	border-radius: 6px;
+	box-shadow: 0 3px 12px rgba(0, 0, 0, 0.22);
+}
+
+.atlas-toast[hidden] {
+	display: none;
+}
+
+/* ── scroll column ───────────────────────────────────────────────────── */
+
+.atlas-page {
+	padding: 0 24px 60vh;
+	transition: padding-right 0.15s ease;
+}
+
+body.atlas-panel-open .atlas-page {
+	padding-right: calc(var(--atlas-panel-w) + 24px);
+}
+
+body.atlas-panel-open-wide .atlas-page {
+	padding-right: calc(var(--atlas-panel-wide-w) + 24px);
+}
+
+.atlas-placeholder,
+.atlas-error {
+	color: var(--atlas-muted);
+	text-align: center;
+}
+
+.atlas-error {
+	color: var(--vscode-errorForeground, #c0392b);
+}
+
+/* ── wide-table display modes, toggled from the toolbar ──────────────── */
+
+/* Expand mode: the table is shown in full and the page scrolls instead. */
+body.atlas-tables-expanded {
+	overflow-x: auto;
+}
+
+body.atlas-tables-expanded .atlas-table-scroll {
+	overflow-x: visible;
+}
+
+body.atlas-tables-expanded .atlas-content table {
+	width: max-content;
+	min-width: 100%;
+}
+
+/* ── code block copy button ──────────────────────────────────────────── */
+
+.atlas-copy {
+	flex: 0 0 auto;
+	padding: 2px 8px;
+	font: inherit;
+	color: inherit;
+	background: transparent;
+	border: 1px solid var(--atlas-code-border);
+	border-radius: 4px;
+	cursor: pointer;
+	opacity: 0;
+	transition: opacity 0.12s ease;
+}
+
+.atlas-code:hover .atlas-copy,
+.atlas-copy:focus-visible {
+	opacity: 1;
+}
+
+.atlas-copy.is-copied {
+	opacity: 1;
+	color: var(--atlas-accent);
+}
+
+/* ── clipboard fallback target ───────────────────────────────────────── */
+
+.atlas-offscreen {
+	position: fixed;
+	top: -1000px;
+	left: -1000px;
+	opacity: 0;
+}
+
+/* ── toolbar dropdown (export) ───────────────────────────────────────── */
+
+.atlas-menu-wrap {
+	position: relative;
+	display: inline-flex;
+}
+
+.atlas-caret {
+	margin-left: 2px;
+	font-size: 9px;
+	vertical-align: 1px;
+	opacity: 0.75;
+}
+
+.atlas-menu {
+	position: absolute;
+	top: calc(100% + 5px);
+	right: 0;
+	z-index: 30;
+	width: 296px;
+	padding: 6px;
+	background: var(--vscode-menu-background, var(--vscode-editorWidget-background, #f3f3f3));
+	color: var(--vscode-menu-foreground, inherit);
+	border: 1px solid var(--vscode-menu-border, var(--vscode-editorWidget-border, rgba(128, 128, 128, 0.35)));
+	border-radius: 7px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24);
+}
+
+.atlas-menu[hidden] {
+	display: none;
+}
+
+.atlas-menu-label {
+	padding: 4px 8px 3px;
+	font-size: 10.5px;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--vscode-descriptionForeground, #777);
+}
+
+.atlas-menu-item {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	width: 100%;
+	padding: 6px 8px;
+	font: inherit;
+	text-align: left;
+	color: inherit;
+	background: transparent;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.atlas-menu-item:hover,
+.atlas-menu-item:focus-visible {
+	background: var(--vscode-menu-selectionBackground, var(--vscode-list-hoverBackground, rgba(128, 128, 128, 0.18)));
+	color: var(--vscode-menu-selectionForeground, inherit);
+	outline: none;
+}
+
+.atlas-menu-item-title {
+	font-weight: 600;
+}
+
+.atlas-menu-item-desc {
+	font-size: 11px;
+	line-height: 1.45;
+	opacity: 0.75;
+}
+
+.atlas-menu-divider {
+	margin: 5px 4px;
+	border-top: 1px solid var(--vscode-menu-separatorBackground, rgba(128, 128, 128, 0.28));
+}
+
+#atlas-export-path {
+	width: calc(100% - 16px);
+	margin: 0 8px;
+	padding: 4px 7px;
+	font-family: var(--atlas-mono-font);
+	font-size: 11.5px;
+	color: var(--vscode-input-foreground, inherit);
+	background: var(--vscode-input-background, #fff);
+	border: 1px solid var(--vscode-input-border, rgba(128, 128, 128, 0.35));
+	border-radius: 4px;
+}
+
+#atlas-export-path:focus {
+	outline: 1px solid var(--vscode-focusBorder, #0078d4);
+	outline-offset: -1px;
+}
+
+.atlas-menu-hint {
+	margin: 5px 8px 3px;
+	font-size: 10.5px;
+	line-height: 1.5;
+	color: var(--vscode-descriptionForeground, #777);
+}

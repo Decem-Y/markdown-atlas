@@ -1,0 +1,81 @@
+/* Medium Editorial — large serif body, sans-serif headings, wide measure. */
+
+:root {
+	--atlas-bg: #ffffff;
+	--atlas-fg: #292929;
+	--atlas-muted: #999999;
+	--atlas-border: #e8e8e8;
+	--atlas-accent: #1a8917;
+	--atlas-code-bg: #f2f2f2;
+	--atlas-code-border: #e4e4e4;
+	--atlas-body-font: Georgia, 'Palatino Linotype', 'Songti SC', serif;
+	--atlas-display-font: 'Helvetica Neue', Helvetica, Arial, 'PingFang SC', sans-serif;
+}
+
+/* Medium sets a larger body size than the other themes; expressed relative to
+   the configured base so zoom and `preview.fontSize` still apply. */
+.atlas-content {
+	color: var(--atlas-fg);
+	font-family: var(--atlas-body-font);
+	font-size: calc(var(--atlas-font-size) * var(--atlas-zoom) * 1.125);
+	line-height: 1.9;
+	letter-spacing: 0.01em;
+}
+
+.atlas-content h1,
+.atlas-content h2,
+.atlas-content h3,
+.atlas-content h4,
+.atlas-content h5,
+.atlas-content h6 {
+	font-family: var(--atlas-display-font);
+	color: #1a1a1a;
+	font-weight: 700;
+	border: none;
+	padding: 0;
+}
+
+.atlas-content h1 { font-size: 2em; letter-spacing: -0.03em; line-height: 1.25; margin: 0.5em 0 0.3em; }
+.atlas-content h2 { font-size: 1.4em; letter-spacing: -0.02em; margin: 2em 0 0.4em; }
+.atlas-content h3 { font-size: 1.15em; margin: 1.6em 0 0.3em; }
+.atlas-content h4,
+.atlas-content h5,
+.atlas-content h6 { font-size: 1em; color: #555; margin: 1.3em 0 0.3em; }
+
+.atlas-content p { margin: 1.1em 0; }
+.atlas-content strong { font-weight: 700; color: #1a1a1a; }
+.atlas-content a { color: var(--atlas-accent); text-decoration: none; }
+.atlas-content a:hover { text-decoration: underline; }
+
+.atlas-content blockquote {
+	margin: 2em 0;
+	padding: 0 0 0 28px;
+	color: #6b6b6b;
+	font-style: italic;
+	font-size: 1.1em;
+	border-left: 3px solid #1a1a1a;
+}
+
+.atlas-content blockquote > :first-child { margin-top: 0; }
+.atlas-content blockquote > :last-child { margin-bottom: 0; }
+
+.atlas-content :not(pre) > code {
+	background: var(--atlas-code-bg);
+	padding: 2px 6px;
+	border-radius: 3px;
+	font-family: var(--atlas-mono-font);
+	font-size: 0.82em;
+	color: #c7254e;
+}
+
+.atlas-content table { width: 100%; margin: 1.5em 0; }
+.atlas-content th,
+.atlas-content td { border: none; border-bottom: 1px solid var(--atlas-border); padding: 12px 16px; text-align: left; }
+.atlas-content th { font-family: var(--atlas-display-font); font-size: 0.85em; font-weight: 700; border-bottom: 2px solid #1a1a1a; }
+
+.atlas-content ul,
+.atlas-content ol { padding-left: 1.8em; }
+
+.atlas-content hr { border: none; border-top: 1px solid var(--atlas-border); margin: 2.5em 0; }
+.atlas-content img { border-radius: 4px; }
+.atlas-content figcaption { font-style: italic; }

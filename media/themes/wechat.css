@@ -1,0 +1,88 @@
+/* WeChat Classic — centred warm headings over a blue accent. */
+
+:root {
+	--atlas-bg: #ffffff;
+	--atlas-fg: #3f3f3f;
+	--atlas-muted: #999999;
+	--atlas-border: #dddddd;
+	--atlas-accent: #007aaa;
+	--atlas-code-bg: #f6f8fa;
+	--atlas-code-border: #eaedf0;
+	--atlas-body-font: system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
+		'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei',
+		Arial, sans-serif;
+}
+
+.atlas-content {
+	color: var(--atlas-fg);
+	font-family: var(--atlas-body-font);
+	line-height: 1.75;
+}
+
+.atlas-content h1 {
+	font-size: 1.4em;
+	color: #de7456;
+	text-align: center;
+	margin: 0.6em 0 0.5em;
+}
+
+.atlas-content h2 {
+	font-size: 1.2em;
+	font-weight: bold;
+	color: #de7456;
+	text-align: center;
+	line-height: 2;
+	border-bottom: 1px solid #de7456;
+	margin: 1.6em auto 0.8em;
+	padding-bottom: 4px;
+}
+
+.atlas-content h3 {
+	font-size: 1.1em;
+	color: var(--atlas-accent);
+	border-left: 3px solid var(--atlas-accent);
+	padding-left: 10px;
+	margin: 1.5em 0 0.5em;
+}
+
+.atlas-content h4,
+.atlas-content h5,
+.atlas-content h6 {
+	font-size: 1em;
+	color: var(--atlas-accent);
+	margin: 1.2em 0 0.4em;
+}
+
+.atlas-content p { margin: 1.1em 0; }
+.atlas-content strong { font-weight: 600; color: var(--atlas-accent); }
+.atlas-content a { color: #e08b2c; }
+
+.atlas-content blockquote {
+	border-left: 4px solid var(--atlas-border);
+	margin: 1.2em 0;
+	padding: 0.5em 1em;
+	color: #666;
+	background: #fafafa;
+}
+
+.atlas-content blockquote > :first-child { margin-top: 0; }
+.atlas-content blockquote > :last-child { margin-bottom: 0; }
+
+.atlas-content :not(pre) > code {
+	background: #f0f0f0;
+	padding: 2px 6px;
+	border-radius: 3px;
+	font-family: var(--atlas-mono-font);
+	font-size: 0.87em;
+	color: #c7254e;
+}
+
+.atlas-content table { width: 100%; margin: 1.2em 0; }
+.atlas-content th,
+.atlas-content td { border: 1px solid #999; padding: 8px 10px; }
+.atlas-content th { background: #f2f2f2; font-weight: bold; text-align: center; }
+
+.atlas-content ul,
+.atlas-content ol { padding-left: 1.5em; }
+
+.atlas-content hr { border: none; border-top: 1px solid #eee; margin: 1.8em 0; }
