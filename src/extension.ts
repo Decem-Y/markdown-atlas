@@ -84,7 +84,7 @@ function resolveResource(uri: vscode.Uri | undefined, manager: PreviewManager): 
 	}
 
 	void vscode.window.showInformationMessage(
-		'Markdown Atlas: open a Markdown file first, or run this from the file explorer.',
+		'Markdown Atlas：请先打开一个 Markdown 文件，或从资源管理器里运行。',
 	);
 	return undefined;
 }
@@ -95,11 +95,11 @@ async function selectTheme(): Promise<void> {
 	const picked = await vscode.window.showQuickPick(
 		THEMES.map(theme => ({
 			label: theme.label,
-			description: theme.id === active ? '$(check) current' : undefined,
+			description: theme.id === active ? '$(check) 当前' : undefined,
 			detail: theme.description,
 			id: theme.id,
 		})),
-		{ title: 'Markdown Atlas — preview theme', placeHolder: 'Select a preview theme' },
+		{ title: 'Markdown Atlas —— 预览主题', placeHolder: '选择一套预览主题' },
 	);
 
 	if (picked) {

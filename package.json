@@ -1,7 +1,7 @@
 {
   "name": "markdown-atlas",
   "displayName": "Markdown Atlas",
-  "description": "A themed Markdown preview for VS Code — beautiful typography, live scroll sync, math and code highlighting.",
+  "description": "给 VS Code 的 Markdown 预览换一套排版 —— 8 套主题、双向滚动同步、KaTeX 公式、代码高亮、自定义样式，导出独立 HTML 与 PDF。",
   "version": "0.3.2",
   "publisher": "decemy",
   "license": "MIT",
@@ -41,7 +41,7 @@
     "commands": [
       {
         "command": "markdownAtlas.showPreview",
-        "title": "Open Preview",
+        "title": "打开预览",
         "category": "Markdown Atlas",
         "icon": {
           "light": "./media/icon/preview-light.svg",
@@ -50,7 +50,7 @@
       },
       {
         "command": "markdownAtlas.showPreviewToSide",
-        "title": "Open Preview to the Side",
+        "title": "在侧边打开预览",
         "category": "Markdown Atlas",
         "icon": {
           "light": "./media/icon/preview-light.svg",
@@ -59,33 +59,33 @@
       },
       {
         "command": "markdownAtlas.selectTheme",
-        "title": "Select Preview Theme",
+        "title": "选择预览主题",
         "category": "Markdown Atlas"
       },
       {
         "command": "markdownAtlas.refreshPreview",
-        "title": "Refresh Preview",
+        "title": "刷新预览",
         "category": "Markdown Atlas"
       },
       {
         "command": "markdownAtlas.exportHtml",
-        "title": "Export as HTML",
+        "title": "导出为 HTML",
         "category": "Markdown Atlas",
         "icon": "$(save)"
       },
       {
         "command": "markdownAtlas.editCustomCss",
-        "title": "Edit Custom CSS",
+        "title": "编辑自定义 CSS",
         "category": "Markdown Atlas"
       },
       {
         "command": "markdownAtlas.exportPdf",
-        "title": "Export as PDF",
+        "title": "导出为 PDF",
         "category": "Markdown Atlas"
       },
       {
         "command": "markdownAtlas.export",
-        "title": "Export…",
+        "title": "导出…",
         "category": "Markdown Atlas",
         "icon": "$(save)"
       }
@@ -169,50 +169,50 @@
             "clean-blue"
           ],
           "enumDescriptions": [
-            "Follows the current VS Code color theme (light and dark).",
-            "WeChat Classic — centred warm headings, blue accents.",
-            "macOS Minimal — neutral greys, generous whitespace.",
-            "Academic Paper — serif body, numbered feel, tight tables.",
-            "Notion Clean — flat sans-serif, soft dividers.",
-            "Medium Editorial — large serif body, wide measure.",
-            "Tech Blog — compact sans-serif, dense and readable.",
-            "Clean Blue — light blue accents, business-report look."
+            "跟随当前 VS Code 配色主题，明暗自动切换。",
+            "微信经典 —— 居中暖色标题，蓝色强调。",
+            "macOS 简约 —— 中性灰，留白充足。",
+            "学术论文 —— 衬线正文，首行缩进，三线表。",
+            "Notion 简洁 —— 扁平无衬线，柔和分隔线。",
+            "Medium 编辑 —— 大号衬线正文，宽版心。",
+            "科技博客 —— 紧凑无衬线，密而易读。",
+            "简约蓝 —— 蓝色强调，商务报告感。"
           ],
-          "description": "Visual theme used by the Markdown Atlas preview."
+          "description": "Markdown Atlas 预览使用的主题。"
         },
         "markdownAtlas.preview.fontSize": {
           "type": "number",
           "default": 16,
           "minimum": 10,
           "maximum": 32,
-          "description": "Base body font size (px) in the preview. Headings and code scale relative to it."
+          "description": "预览正文的基础字号（px）。标题和代码按比例缩放。"
         },
         "markdownAtlas.preview.lineWidth": {
           "type": "number",
           "default": 760,
           "minimum": 360,
           "maximum": 1600,
-          "description": "Maximum width (px) of the article column in the preview."
+          "description": "预览中文章栏的最大宽度（px）。"
         },
         "markdownAtlas.preview.scrollPreviewWithEditor": {
           "type": "boolean",
           "default": true,
-          "description": "Scroll the preview to keep up with the editor's visible range."
+          "description": "预览跟随编辑器的可见范围滚动。"
         },
         "markdownAtlas.preview.scrollEditorWithPreview": {
           "type": "boolean",
           "default": true,
-          "description": "Scroll the editor to keep up with the preview's visible range."
+          "description": "编辑器跟随预览的可见范围滚动。"
         },
         "markdownAtlas.preview.doubleClickToSwitchToEditor": {
           "type": "boolean",
           "default": false,
-          "description": "Double-click in the preview to jump to that line in the editor. Off by default: double-click normally selects a word, and hijacking it makes text hard to copy. The toolbar's back-arrow button jumps to the editor without a gesture."
+          "description": "在预览里双击，跳到编辑器中对应的行。默认关闭：双击在网页里的含义是选中一个词，抢掉这个手势会让文字难以复制。工具栏的 ← 按钮不占用手势也能跳回编辑器。"
         },
         "markdownAtlas.preview.showToolbar": {
           "type": "boolean",
           "default": true,
-          "description": "Show the preview toolbar (theme picker, outline, zoom)."
+          "description": "显示预览工具栏（主题选择、目录、缩放）。"
         },
         "markdownAtlas.preview.tableDisplay": {
           "type": "string",
@@ -222,15 +222,15 @@
             "expand"
           ],
           "enumDescriptions": [
-            "A wide table scrolls sideways inside the article column.",
-            "A wide table is shown in full; the page scrolls sideways instead."
+            "宽表格在文章栏内横向滚动。",
+            "宽表格完整展开，改为整页横向滚动。"
           ],
-          "description": "How wide tables behave. The preview toolbar toggles this per document."
+          "description": "宽表格的显示方式。预览工具栏可以按文档切换。"
         },
         "markdownAtlas.math.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Render $...$ and $$...$$ math with KaTeX."
+          "description": "用 KaTeX 渲染 $...$ 与 $$...$$ 公式。"
         },
         "markdownAtlas.preview.frontMatter": {
           "type": "string",
@@ -240,31 +240,31 @@
             "card"
           ],
           "enumDescriptions": [
-            "Hide the YAML front matter block entirely.",
-            "Render the YAML front matter as a small metadata card above the document."
+            "完全隐藏 YAML front matter 块。",
+            "把 YAML front matter 渲染成文档顶部的元信息卡片。"
           ],
-          "description": "How to display YAML front matter in the preview."
+          "description": "预览中如何显示 YAML front matter。"
         },
         "markdownAtlas.customCss": {
           "type": "string",
           "default": "",
           "editPresentation": "multilineText",
-          "markdownDescription": "CSS layered on top of the active theme. Prefix every rule with `.atlas-content`, e.g. `.atlas-content h2 { color: #07c160; }`. Editable from the preview's Style panel."
+          "markdownDescription": "叠加在当前主题之上的 CSS。每条规则都要以 `.atlas-content` 开头，例如 `.atlas-content h2 { color: #07c160; }`。也可以在预览的样式面板里编辑。"
         },
         "markdownAtlas.export.outputPath": {
           "type": "string",
           "default": "",
-          "description": "Default destination for exports. Absolute, or relative to the Markdown file. A value ending in a file extension is used as the filename (the extension is forced to match the format); anything else is treated as a directory. Empty writes beside the source file. The preview's export field overrides this per export."
+          "description": "导出的默认目标位置。绝对路径，或相对于 Markdown 文件的路径。以扩展名结尾的值当作文件名使用（扩展名会被强制改成当前格式），其余当作目录。留空则写在源文件旁边。预览里的导出路径输入框会按次覆盖此设置。"
         },
         "markdownAtlas.export.embedImages": {
           "type": "boolean",
           "default": true,
-          "description": "Inline local images into the exported HTML as data URIs, so the file stands on its own."
+          "description": "导出 HTML 时把本地图片内联成 data URI，让文件可以独立分发。"
         },
         "markdownAtlas.export.chromePath": {
           "type": "string",
           "default": "",
-          "description": "Path to the Chrome, Edge or Chromium executable used for PDF export. Empty auto-detects the usual install locations."
+          "description": "PDF 导出所用的 Chrome / Edge / Chromium 可执行文件路径。留空则自动探测常见安装位置。"
         },
         "markdownAtlas.export.pdf.pageSize": {
           "type": "string",
@@ -277,12 +277,12 @@
             "Legal",
             "Tabloid"
           ],
-          "description": "Page size for PDF export."
+          "description": "PDF 导出的页面大小。"
         },
         "markdownAtlas.export.pdf.margin": {
           "type": "string",
           "default": "16mm",
-          "description": "Page margin for PDF export, as a CSS length (e.g. 16mm, 0.6in, or \"20mm 15mm\")."
+          "description": "PDF 导出的页边距，写成 CSS 长度（例如 16mm、0.6in，或 \"20mm 15mm\"）。"
         }
       }
     }

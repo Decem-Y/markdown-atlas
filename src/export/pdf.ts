@@ -68,7 +68,7 @@ export async function renderPdf(
 		pdf = await withDeadline(
 			print(session, html),
 			timeoutMs,
-			`${name} did not finish printing within ${Math.round(timeoutMs / 1000)}s.`,
+			`${name} 在 ${Math.round(timeoutMs / 1000)} 秒内没有完成打印。`,
 		);
 	} finally {
 		await session.close();
@@ -132,7 +132,7 @@ async function print(session: Session, html: string): Promise<Buffer> {
 
 	const pdf = Buffer.from(data, 'base64');
 	if (!pdf.byteLength) {
-		throw new Error(`${session.name} returned an empty PDF.`);
+		throw new Error(`${session.name} 返回了一个空的 PDF。`);
 	}
 	return pdf;
 }
@@ -208,8 +208,8 @@ function launch(browser: string, name: string, profileDir: string): Session {
 		pending.clear();
 	};
 
-	child.on('error', error => fail(new Error(`Could not start ${name}: ${error.message}`)));
-	child.on('exit', code => fail(new Error(`${name} exited early (code ${code}). ${lastLine(stderr)}`)));
+	child.on('error', error => fail(new Error(`无法启动 ${name}：${error.message}`)));
+	child.on('exit', code => fail(new Error(`${name} 提前退出（代码 ${code}）。${lastLine(stderr)}`)));
 	// The pipe ends are ours; nothing else is listening if they break.
 	read.on('error', () => undefined);
 	write.on('error', () => undefined);
@@ -231,7 +231,7 @@ function launch(browser: string, name: string, profileDir: string): Session {
 		}
 		pending.delete(frame.id);
 		if (frame.error) {
-			entry.reject(new Error(frame.error.message ?? 'DevTools protocol error'));
+			entry.reject(new Error(frame.error.message ?? 'DevTools 协议返回了错误'));
 		} else {
 			entry.resolve((frame.result ?? {}) as never);
 		}
@@ -384,7 +384,7 @@ export async function findBrowser(configured: string): Promise<string> {
 			return explicit;
 		}
 		throw new Error(
-			`markdownAtlas.export.chromePath points at "${explicit}", which is not an executable file.`,
+			`markdownAtlas.export.chromePath 指向 "${explicit}"，那不是一个可执行文件。`,
 		);
 	}
 
@@ -395,7 +395,7 @@ export async function findBrowser(configured: string): Promise<string> {
 	}
 
 	throw new Error(
-		'No Chrome, Edge or Chromium was found. Install one, or set markdownAtlas.export.chromePath.',
+		'没有找到 Chrome、Edge 或 Chromium。请装一个，或设置 markdownAtlas.export.chromePath。',
 	);
 }
 

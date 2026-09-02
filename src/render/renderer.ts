@@ -280,7 +280,7 @@ function addCodeBlocks(md: MarkdownIt, copyButton: boolean): void {
 			`<span class="atlas-dots">${CODE_DOTS}</span>` +
 			`<span class="atlas-code-lang">${md.utils.escapeHtml(known || language)}</span>` +
 			(copyButton
-				? `<button type="button" class="atlas-copy" title="Copy">Copy</button>`
+				? `<button type="button" class="atlas-copy" title="复制">复制</button>`
 				: '') +
 			`</div>` +
 			`<pre><code class="hljs${known ? ` language-${known}` : ''}">${body}</code></pre>` +

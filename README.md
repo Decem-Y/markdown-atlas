@@ -46,11 +46,11 @@
 
 ### 工具栏
 
-`[主题 ▾]` · `📑 Outline` · `🎨 Style` · `▦ Scroll/Expand` · `→` `←` · `− 100% +` · `💾 Export ▾`
+`[主题 ▾]` · `📑 目录` · `🎨 样式` · `▦ 滚动/展开` · `→` `←` · `− 100% +` · `💾 导出 ▾`
 
 ### 导出
 
-工具栏 `💾 Export ▾` 打开下拉，选 **HTML** 或 **PDF**；下拉里还有一个**目标路径输入框**。也可以走命令面板（`Export…` / `Export as HTML` / `Export as PDF`）或在资源管理器里右键 `.md` 文件。
+工具栏 `💾 导出 ▾` 打开下拉，选 **HTML** 或 **PDF**；下拉里还有一个**目标路径输入框**。也可以走命令面板（`导出…` / `导出为 HTML` / `导出为 PDF`）或在资源管理器里右键 `.md` 文件。
 
 **路径怎么写**（输入框和 `markdownAtlas.export.outputPath` 设置是同一套规则，输入框优先，只对本次导出生效）：
 
@@ -72,7 +72,7 @@
 
 ### 自定义样式
 
-工具栏 `🎨 Style` 打开面板，写 CSS，点 `Apply`。所有规则要以 `.atlas-content` 开头（代码块容器是 `.atlas-code`）：
+工具栏 `🎨 样式` 打开面板，写 CSS，点 `应用`。所有规则要以 `.atlas-content` 开头（代码块容器是 `.atlas-code`）：
 
 ```css
 .atlas-content h1 {

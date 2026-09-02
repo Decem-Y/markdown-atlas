@@ -182,7 +182,7 @@ export class PreviewPanel {
 				math: config.math,
 			});
 
-			this.panel.title = title ? `${title} — Preview` : previewTitle(this.resource);
+			this.panel.title = title ? `${title} · 预览` : previewTitle(this.resource);
 			void this.panel.webview.postMessage({
 				type: 'update',
 				html,
@@ -255,7 +255,7 @@ export class PreviewPanel {
 			this.matches(candidate.document.uri),
 		);
 		if (!editor) {
-			void this.toast('No editor open for this document.');
+			void this.toast('这个文档没有打开的编辑器。');
 			return;
 		}
 
@@ -275,7 +275,7 @@ export class PreviewPanel {
 		);
 		if (editors.length === 0) {
 			if (force) {
-				void this.toast('No editor open for this document.');
+				void this.toast('这个文档没有打开的编辑器。');
 			}
 			return;
 		}
@@ -400,7 +400,7 @@ export class PreviewPanel {
 
 function previewTitle(resource: vscode.Uri): string {
 	const segments = resource.path.split('/');
-	return `${segments[segments.length - 1] || 'Markdown'} — Preview`;
+	return `${segments[segments.length - 1] || 'Markdown'} · 预览`;
 }
 
 function webviewOptions(

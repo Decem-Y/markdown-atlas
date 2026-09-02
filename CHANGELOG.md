@@ -1,5 +1,14 @@
 # Changelog
 
+## [未发布]
+
+### 变更
+
+- **界面文案全部改为中文**：命令名、设置说明、预览工具栏、目录/样式面板、导出下拉、通知与错误提示。技术名词（Markdown、HTML、PDF、CSS、KaTeX、Chrome/Edge/Chromium）、设置项 key、CSS 选择器和主题 id 保持英文
+- 商店简介（`package.json` 的 `description`）也改成中文，与 README 一致
+- 预览页与导出的 HTML `lang` 从 `en` 改为 `zh-CN`——浏览器据此挑 CJK 字形，标成 `en` 可能会拿到日文字形的回退字体
+- 未发布到商店，商店上仍是 0.3.2
+
 ## [0.3.2] - 2026-09-01
 
 ### 变更

@@ -31,7 +31,7 @@ export async function exportDocument(
 		await vscode.window.withProgress(
 			{
 				location: vscode.ProgressLocation.Notification,
-				title: `Markdown Atlas: exporting ${request.format.toUpperCase()}`,
+				title: `Markdown Atlas：正在导出 ${request.format.toUpperCase()}`,
 			},
 			async () => {
 				const document = await vscode.workspace.openTextDocument(resource);
@@ -65,13 +65,13 @@ export async function exportDocument(
 	}
 
 	const action = await vscode.window.showInformationMessage(
-		`Exported to ${vscode.workspace.asRelativePath(target)}`,
-		'Open File',
-		'Reveal in Explorer',
+		`已导出到 ${vscode.workspace.asRelativePath(target)}`,
+		'打开文件',
+		'在文件管理器中显示',
 	);
-	if (action === 'Open File') {
+	if (action === '打开文件') {
 		await vscode.commands.executeCommand('vscode.open', target);
-	} else if (action === 'Reveal in Explorer') {
+	} else if (action === '在文件管理器中显示') {
 		await vscode.commands.executeCommand('revealFileInOS', target);
 	}
 }
@@ -85,16 +85,16 @@ export async function pickAndExport(
 		[
 			{
 				label: '$(globe) HTML',
-				detail: 'One self-contained file — CSS and images inlined.',
+				detail: '单个独立文件 —— CSS 和图片全部内联。',
 				format: 'html' as const,
 			},
 			{
 				label: '$(file-pdf) PDF',
-				detail: 'Rendered through the Chrome, Edge or Chromium already installed on this machine.',
+				detail: '用本机已装好的 Chrome / Edge / Chromium 打印。',
 				format: 'pdf' as const,
 			},
 		],
-		{ title: 'Markdown Atlas — export', placeHolder: 'Choose a format' },
+		{ title: 'Markdown Atlas —— 导出', placeHolder: '选择导出格式' },
 	);
 
 	if (picked) {
@@ -145,13 +145,13 @@ function toUri(resource: vscode.Uri, requested: string): vscode.Uri {
 
 async function reportFailure(error: unknown): Promise<void> {
 	const message = error instanceof Error ? error.message : String(error);
-	const needsBrowser = message.includes('No Chrome, Edge or Chromium');
+	const needsBrowser = message.includes('没有找到 Chrome');
 
 	const action = await vscode.window.showErrorMessage(
-		`Markdown Atlas: export failed. ${message}`,
-		...(needsBrowser ? ['Set browser path'] : []),
+		`Markdown Atlas：导出失败。${message}`,
+		...(needsBrowser ? ['设置浏览器路径'] : []),
 	);
-	if (action === 'Set browser path') {
+	if (action === '设置浏览器路径') {
 		await vscode.commands.executeCommand(
 			'workbench.action.openSettings',
 			'markdownAtlas.export.chromePath',

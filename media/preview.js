@@ -234,7 +234,7 @@
 			outline.replaceChildren();
 			const empty = document.createElement('p');
 			empty.className = 'atlas-outline-empty';
-			empty.textContent = 'No headings';
+			empty.textContent = '没有标题';
 			outline.appendChild(empty);
 			return;
 		}
@@ -290,7 +290,7 @@
 	function applyTableDisplay() {
 		const expanded = state.tableDisplay === 'expand';
 		document.body.classList.toggle('atlas-tables-expanded', expanded);
-		tableToggle.textContent = expanded ? '▦ Expand' : '▦ Scroll';
+		tableToggle.textContent = expanded ? '▦ 展开' : '▦ 滚动';
 		tableToggle.classList.toggle('is-active', expanded);
 	}
 
@@ -332,7 +332,7 @@
 		const text = code.textContent || '';
 		const done = () => {
 			const original = button.textContent;
-			button.textContent = 'Copied';
+			button.textContent = '已复制';
 			button.classList.add('is-copied');
 			setTimeout(() => {
 				button.textContent = original;
@@ -492,14 +492,14 @@
 		const css = cssInput.value;
 		applyCustomCss(css);
 		vscode.postMessage({ type: 'setCustomCss', css: css });
-		showToast('Custom CSS applied');
+		showToast('自定义 CSS 已应用');
 	});
 
 	$('atlas-css-reset').addEventListener('click', () => {
 		cssInput.value = '';
 		applyCustomCss('');
 		vscode.postMessage({ type: 'setCustomCss', css: '' });
-		showToast('Custom CSS cleared');
+		showToast('自定义 CSS 已清空');
 	});
 
 	// The toolbar wraps on a narrow panel, so its height is not a constant.
@@ -608,7 +608,7 @@
 				content.replaceChildren();
 				const box = document.createElement('p');
 				box.className = 'atlas-error';
-				box.textContent = 'Markdown Atlas could not render this file: ' + message.message;
+				box.textContent = 'Markdown Atlas 无法渲染这个文件：' + message.message;
 				content.appendChild(box);
 				break;
 			}

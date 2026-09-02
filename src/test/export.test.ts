@@ -180,7 +180,7 @@ suite('export', () => {
 	test('a browser path that is not an executable is reported, not guessed past', async () => {
 		await assert.rejects(
 			() => findBrowser(vscode.Uri.joinPath(workDir, 'not-a-browser').fsPath),
-			/not an executable file/,
+			/不是一个可执行文件/,
 		);
 	});
 
