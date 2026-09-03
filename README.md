@@ -29,11 +29,13 @@
 - **目录面板**：文档标题树，点击跳转，滚动时自动高亮当前所在的标题。
 - **自定义样式面板**：在预览里直接写 CSS 覆盖当前主题，`应用` 即时生效并存进设置，重启还在。附常用选择器速查。
 - **导出独立 HTML**：当前主题 + 自定义 CSS 全部内联，本地图片转 data URI，文档里有公式才带上 KaTeX 字体。一个文件，断网也能打开。
-- **宽表格两种模式**：正文内横向滚动（默认）／完整展开（页面横向滚动），工具栏一键切换，文档里没有表格时按钮自动隐藏。
+- **宽表格两种模式**：正文内横向滚动（默认）／完整展开（页面横向滚动），工具栏一键切换，文档里没有表格时按钮自动隐藏。切换只作用于当前这个预览，不会写回设置。
 - **两个同步按钮**：`→` 把预览跳到编辑器光标处，`←` 把编辑器跳到预览当前位置。
 - `Ctrl/Cmd+F` 是 VS Code 原生的查找组件（面板开了 `enableFindWidget`），正则和大小写都有。
 - **缩放**、**主题下拉** 也在工具栏里。
-- 关掉 VS Code 再打开，预览面板、滚动位置、缩放和面板开合状态都会自己恢复。
+- 关掉 VS Code 再打开，预览面板、滚动位置、缩放、面板开合状态和表格显示模式都会自己恢复。
+- 预览标签页显示的是**文件名**加一枚 Atlas 图标，不是文档的一级标题 —— 标签栏里靠文件名区分，图标用来和编辑器标签区分。
+- 重命名或移动 `.md` 文件，预览会跟着走，不会变成一块错误提示。
 
 ## 用法
 
@@ -87,6 +89,8 @@
 
 内容存在 `markdownAtlas.customCss` 设置里，所有预览共享，也会一起被导出。命令 `Markdown Atlas: Edit Custom CSS` 直接跳到该设置项。
 
+> 工具栏改主题、写自定义 CSS 都会写回这个值**本来定义在哪一层**：文件夹设置 → 工作区设置 → 用户设置。所以在 `.vscode/settings.json` 里给某个仓库钉死主题之后，工具栏仍然改得动，改的也是那份工作区设置。
+
 ## 设置
 
 | 设置项 | 默认值 | 说明 |
@@ -98,7 +102,7 @@
 | `markdownAtlas.preview.scrollEditorWithPreview` | `true` | 编辑器跟随预览滚动 |
 | `markdownAtlas.preview.doubleClickToSwitchToEditor` | `false` | 双击预览跳到源码（默认关，避免抢掉「双击选词」） |
 | `markdownAtlas.preview.showToolbar` | `true` | 显示预览工具栏 |
-| `markdownAtlas.preview.tableDisplay` | `scroll` | 宽表格 `scroll` 列内滚动 / `expand` 完整展开 |
+| `markdownAtlas.preview.tableDisplay` | `scroll` | 宽表格的**默认**模式：`scroll` 列内滚动 / `expand` 完整展开。工具栏的切换只作用于那一个预览 |
 | `markdownAtlas.customCss` | `""` | 叠加在主题之上的 CSS |
 | `markdownAtlas.export.outputPath` | `""` | 默认导出目标，绝对或相对 md 文件；留空＝同目录 |
 | `markdownAtlas.export.embedImages` | `true` | HTML 导出时把本地图片内联成 data URI（PDF 恒为内联） |

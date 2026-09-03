@@ -90,7 +90,8 @@ function resolveResource(uri: vscode.Uri | undefined, manager: PreviewManager): 
 }
 
 async function selectTheme(): Promise<void> {
-	const active = readConfig(vscode.window.activeTextEditor?.document.uri).theme;
+	const resource = vscode.window.activeTextEditor?.document.uri;
+	const active = readConfig(resource).theme;
 
 	const picked = await vscode.window.showQuickPick(
 		THEMES.map(theme => ({
@@ -103,6 +104,6 @@ async function selectTheme(): Promise<void> {
 	);
 
 	if (picked) {
-		await writeTheme(picked.id);
+		await writeTheme(picked.id, resource);
 	}
 }

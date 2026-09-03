@@ -51,6 +51,12 @@
 		/** 'none' | 'outline' | 'style' */
 		panel: restored.panel === 'outline' || restored.panel === 'style' ? restored.panel : 'none',
 		tableDisplay: 'scroll',
+		/** This preview's own choice, if the toolbar toggle was ever used.
+		 *  Empty means "follow the setting". */
+		tableDisplayOwn:
+			restored.tableDisplayOwn === 'expand' || restored.tableDisplayOwn === 'scroll'
+				? restored.tableDisplayOwn
+				: '',
 		exportPath: typeof restored.exportPath === 'string' ? restored.exportPath : '',
 		scrollEditorWithPreview: true,
 		doubleClickToSwitchToEditor: false,
@@ -68,6 +74,7 @@
 			zoom: state.zoom,
 			panel: state.panel,
 			exportPath: state.exportPath,
+			tableDisplayOwn: state.tableDisplayOwn,
 		});
 	}
 
@@ -453,10 +460,14 @@
 	outlineToggle.addEventListener('click', () => togglePanel('outline'));
 	styleToggle.addEventListener('click', () => togglePanel('style'));
 
+	// Per preview, not a setting: which way one wide table is easier to read is
+	// a property of that document, and rewriting a global setting from a view
+	// toggle would change every other preview along with it.
 	tableToggle.addEventListener('click', () => {
-		state.tableDisplay = state.tableDisplay === 'expand' ? 'scroll' : 'expand';
+		state.tableDisplayOwn = state.tableDisplay === 'expand' ? 'scroll' : 'expand';
+		state.tableDisplay = state.tableDisplayOwn;
 		applyTableDisplay();
-		vscode.postMessage({ type: 'setTableDisplay', mode: state.tableDisplay });
+		saveState();
 	});
 
 	$('atlas-sync-to-preview').addEventListener('click', () => {
@@ -557,7 +568,10 @@
 					}
 				}
 
-				state.tableDisplay = message.tableDisplay === 'expand' ? 'expand' : 'scroll';
+				// The setting is only the default; this preview's own toggle wins.
+				state.tableDisplay =
+					state.tableDisplayOwn ||
+					(message.tableDisplay === 'expand' ? 'expand' : 'scroll');
 				applyTableDisplay();
 
 				if (Array.isArray(message.themes)) {

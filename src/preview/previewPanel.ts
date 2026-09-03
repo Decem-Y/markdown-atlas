@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { readConfig, writeCustomCss, writeTableDisplay, writeTheme, type TableDisplay } from '../config';
+import { readConfig, writeCustomCss, writeTheme } from '../config';
 import { exportDocument, type ExportFormat } from '../export';
 import { render } from '../render/renderer';
 import { dirname, resolveDocumentHref, splitHref } from '../resource';
@@ -18,7 +18,6 @@ interface WebviewMessage {
 	href?: string;
 	theme?: string;
 	css?: string;
-	mode?: TableDisplay;
 	format?: ExportFormat;
 	outputPath?: string;
 	/** Set by the explicit sync buttons, which must win over the echo lock. */
@@ -32,6 +31,7 @@ export interface PreviewSnapshot {
 
 export class PreviewPanel {
 	private readonly disposables: vscode.Disposable[] = [];
+	private currentResource: vscode.Uri;
 	private updateTimer: NodeJS.Timeout | undefined;
 	private previewDrivenScrollUntil = 0;
 	private editorDrivenScrollUntil = 0;
@@ -66,11 +66,13 @@ export class PreviewPanel {
 	private constructor(
 		private readonly context: vscode.ExtensionContext,
 		private readonly panel: vscode.WebviewPanel,
-		readonly resource: vscode.Uri,
+		resource: vscode.Uri,
 		initialLine?: number,
 	) {
+		this.currentResource = resource;
 		this.pendingInitialLine = initialLine;
 		this.panel.title = previewTitle(resource);
+		this.panel.iconPath = previewIcon(context.extensionUri);
 		this.panel.webview.html = shellHtml(
 			this.panel.webview,
 			this.context.extensionUri,
@@ -93,6 +95,8 @@ export class PreviewPanel {
 					this.scheduleUpdate();
 				}
 			}),
+
+			vscode.workspace.onDidRenameFiles(event => this.onRename(event)),
 
 			vscode.window.onDidChangeTextEditorVisibleRanges(event => {
 				this.onEditorScroll(event);
@@ -117,6 +121,10 @@ export class PreviewPanel {
 		);
 
 		this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
+	}
+
+	get resource(): vscode.Uri {
+		return this.currentResource;
 	}
 
 	get viewColumn(): vscode.ViewColumn | undefined {
@@ -151,11 +159,16 @@ export class PreviewPanel {
 		this.disposables.length = 0;
 		this.onDidDisposeEmitter.fire();
 		this.onDidDisposeEmitter.dispose();
+		this.onDidChangeResourceEmitter.dispose();
 		this.panel.dispose();
 	}
 
 	private readonly onDidDisposeEmitter = new vscode.EventEmitter<void>();
 	readonly onDidDispose = this.onDidDisposeEmitter.event;
+
+	private readonly onDidChangeResourceEmitter = new vscode.EventEmitter<void>();
+	/** Fired after a rename moved this preview onto a different file. */
+	readonly onDidChangeResource = this.onDidChangeResourceEmitter.event;
 
 	// ── rendering ──────────────────────────────────────────────────────────
 
@@ -176,13 +189,12 @@ export class PreviewPanel {
 		const config = readConfig(this.resource);
 		try {
 			const document = await vscode.workspace.openTextDocument(this.resource);
-			const { html, title } = render(document.getText(), {
+			const { html } = render(document.getText(), {
 				resolveResource: href => this.resolveResource(href),
 				frontMatter: config.frontMatter,
 				math: config.math,
 			});
 
-			this.panel.title = title ? `${title} · 预览` : previewTitle(this.resource);
 			void this.panel.webview.postMessage({
 				type: 'update',
 				html,
@@ -333,6 +345,33 @@ export class PreviewPanel {
 		);
 	}
 
+	// ── renames ────────────────────────────────────────────────────────────
+
+	/**
+	 * Follows the document when it (or a folder above it) is renamed or moved.
+	 * Without this the preview is stranded on a path that no longer exists and
+	 * the only way out is to close the tab.
+	 */
+	private onRename(event: vscode.FileRenameEvent): void {
+		for (const { oldUri, newUri } of event.files) {
+			const moved = remapResource(this.resource, oldUri, newUri);
+			if (moved) {
+				this.retarget(moved);
+				return;
+			}
+		}
+	}
+
+	private retarget(next: vscode.Uri): void {
+		this.currentResource = next;
+		this.panel.title = previewTitle(next);
+		// The document's own folder is a resource root, so it has to move too.
+		this.panel.webview.options = webviewOptions(this.context, next);
+		this.onDidChangeResourceEmitter.fire();
+		this.postSettings();
+		void this.update();
+	}
+
 	// ── plumbing ───────────────────────────────────────────────────────────
 
 	private matches(uri: vscode.Uri): boolean {
@@ -374,18 +413,12 @@ export class PreviewPanel {
 
 			case 'setTheme':
 				if (message.theme) {
-					void writeTheme(message.theme);
+					void writeTheme(message.theme, this.resource);
 				}
 				break;
 
 			case 'setCustomCss':
-				void writeCustomCss(message.css ?? '');
-				break;
-
-			case 'setTableDisplay':
-				if (message.mode === 'scroll' || message.mode === 'expand') {
-					void writeTableDisplay(message.mode);
-				}
+				void writeCustomCss(message.css ?? '', this.resource);
 				break;
 
 			case 'export':
@@ -398,9 +431,43 @@ export class PreviewPanel {
 	}
 }
 
+/**
+ * Just the file name. A tab is a few centimetres wide, and a document's own
+ * heading is neither short nor unique — two previews titled with the same H1
+ * are indistinguishable, while two file names never are. The Atlas icon on the
+ * tab is what separates a preview from the editor beside it.
+ */
 function previewTitle(resource: vscode.Uri): string {
 	const segments = resource.path.split('/');
-	return `${segments[segments.length - 1] || 'Markdown'} · 预览`;
+	return segments[segments.length - 1] || 'Markdown';
+}
+
+function previewIcon(extensionUri: vscode.Uri): { light: vscode.Uri; dark: vscode.Uri } {
+	return {
+		light: vscode.Uri.joinPath(extensionUri, 'media', 'icon', 'preview-light.svg'),
+		dark: vscode.Uri.joinPath(extensionUri, 'media', 'icon', 'preview-dark.svg'),
+	};
+}
+
+/**
+ * Rewrites `resource` when `oldUri` is the file itself or a folder above it.
+ * Returns `undefined` when the rename has nothing to do with this preview.
+ */
+export function remapResource(
+	resource: vscode.Uri,
+	oldUri: vscode.Uri,
+	newUri: vscode.Uri,
+): vscode.Uri | undefined {
+	if (resource.scheme !== oldUri.scheme || resource.authority !== oldUri.authority) {
+		return undefined;
+	}
+	if (resource.path === oldUri.path) {
+		return newUri;
+	}
+	if (resource.path.startsWith(`${oldUri.path}/`)) {
+		return newUri.with({ path: newUri.path + resource.path.slice(oldUri.path.length) });
+	}
+	return undefined;
 }
 
 function webviewOptions(
@@ -408,12 +475,8 @@ function webviewOptions(
 	resource: vscode.Uri,
 ): vscode.WebviewOptions & vscode.WebviewPanelOptions {
 	const roots = [context.extensionUri, dirname(resource)];
-	const folder = vscode.workspace.getWorkspaceFolder(resource);
-	if (folder) {
+	for (const folder of vscode.workspace.workspaceFolders ?? []) {
 		roots.push(folder.uri);
-	}
-	for (const other of vscode.workspace.workspaceFolders ?? []) {
-		roots.push(other.uri);
 	}
 
 	return {

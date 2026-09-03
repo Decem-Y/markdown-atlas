@@ -2,7 +2,7 @@
   "name": "markdown-atlas",
   "displayName": "Markdown Atlas",
   "description": "给 VS Code 的 Markdown 预览换一套排版 —— 8 套主题、双向滚动同步、KaTeX 公式、代码高亮、自定义样式，导出独立 HTML 与 PDF。",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "publisher": "decemy",
   "license": "MIT",
   "icon": "icon.png",
@@ -225,7 +225,7 @@
             "宽表格在文章栏内横向滚动。",
             "宽表格完整展开，改为整页横向滚动。"
           ],
-          "description": "宽表格的显示方式。预览工具栏可以按文档切换。"
+          "description": "宽表格的默认显示方式。预览工具栏的切换只作用于那一个预览，不会写回这里。"
         },
         "markdownAtlas.math.enabled": {
           "type": "boolean",

@@ -67,8 +67,25 @@ export class PreviewManager implements vscode.Disposable, vscode.WebviewPanelSer
 	}
 
 	private track(preview: PreviewPanel): void {
-		const key = preview.resource.toString();
+		let key = preview.resource.toString();
 		this.panels.set(key, preview);
+
+		// A rename moves the preview onto a different path, so the map it is
+		// looked up by has to move with it.
+		preview.onDidChangeResource(() => {
+			if (this.panels.get(key) === preview) {
+				this.panels.delete(key);
+			}
+			key = preview.resource.toString();
+			// Renaming onto a path that already had a preview overwrote that
+			// file on disk; its preview is showing content that is gone.
+			const stale = this.panels.get(key);
+			if (stale && stale !== preview) {
+				stale.dispose();
+			}
+			this.panels.set(key, preview);
+		});
+
 		preview.onDidDispose(() => {
 			if (this.panels.get(key) === preview) {
 				this.panels.delete(key);

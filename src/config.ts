@@ -50,20 +50,40 @@ export function readConfig(resource?: vscode.Uri): AtlasConfig {
 	};
 }
 
-function update(key: string, value: unknown): Thenable<void> {
-	return vscode.workspace
-		.getConfiguration(CONFIG_SECTION)
-		.update(key, value, vscode.ConfigurationTarget.Global);
+/**
+ * Writes a value back into whichever scope already defines it.
+ *
+ * Always writing Global is what makes a toolbar control look broken: a value
+ * set in `.vscode/settings.json` keeps winning over the one just written, so
+ * the control snaps back on the next settings message with nothing on screen
+ * to explain it. `readConfig` reads the effective value, so the write has to
+ * land in the same layer the read comes from.
+ */
+async function update(key: string, value: unknown, resource?: vscode.Uri): Promise<void> {
+	const config = vscode.workspace.getConfiguration(CONFIG_SECTION, resource);
+	await config.update(key, value, writeTarget(config.inspect(key)));
 }
 
-export async function writeTheme(themeId: string): Promise<void> {
-	await update('theme', themeId);
+/** The layer a write has to land in for `readConfig` to read it back. */
+export function writeTarget(scope: ConfigScope | undefined): vscode.ConfigurationTarget {
+	if (scope?.workspaceFolderValue !== undefined) {
+		return vscode.ConfigurationTarget.WorkspaceFolder;
+	}
+	if (scope?.workspaceValue !== undefined) {
+		return vscode.ConfigurationTarget.Workspace;
+	}
+	return vscode.ConfigurationTarget.Global;
 }
 
-export async function writeCustomCss(css: string): Promise<void> {
-	await update('customCss', css);
+interface ConfigScope {
+	workspaceValue?: unknown;
+	workspaceFolderValue?: unknown;
 }
 
-export async function writeTableDisplay(mode: TableDisplay): Promise<void> {
-	await update('preview.tableDisplay', mode);
+export async function writeTheme(themeId: string, resource?: vscode.Uri): Promise<void> {
+	await update('theme', themeId, resource);
+}
+
+export async function writeCustomCss(css: string, resource?: vscode.Uri): Promise<void> {
+	await update('customCss', css, resource);
 }
