@@ -5,6 +5,12 @@ import katexPlugin from '@vscode/markdown-it-katex';
 /** markdown-it only publishes `Token` through its ESM entry; derive it instead. */
 type Token = ReturnType<MarkdownIt['parse']>[number];
 
+/** Likewise for the parser state the rules below are handed. */
+type BlockRule = Parameters<MarkdownIt['block']['ruler']['after']>[2];
+type InlineRule = Parameters<MarkdownIt['inline']['ruler']['before']>[2];
+type StateBlock = Parameters<BlockRule>[0];
+type StateInline = Parameters<InlineRule>[0];
+
 export type FrontMatterMode = 'hide' | 'card';
 
 export interface RenderOptions {
@@ -92,6 +98,7 @@ function createEngine(options: RenderOptions): MarkdownIt {
 	addTableScroll(md);
 
 	if (options.math) {
+		addLatexDelimiters(md);
 		// Registered last on purpose: the plugin wraps whatever `fence` renderer
 		// it finds, so it must see ours in order to delegate non-math fences back.
 		md.use(katexPlugin, { enableFencedBlocks: true, throwOnError: false });
@@ -310,6 +317,104 @@ function addTableScroll(md: MarkdownIt): void {
 	md.renderer.rules.table_close = (tokens, idx, opts, env, self) =>
 		`${self.renderToken(tokens, idx, opts)}</div>`;
 }
+
+/**
+ * `\\[ … \\]` and `\\( … \\)`, the delimiters LaTeX itself writes. The KaTeX plugin
+ * only knows `$` and `$$`, so a document that came from a LaTeX toolchain — or
+ * from a model that emits LaTeX — shows its formulas as literal backslashes and
+ * brackets instead. These rules only parse: they push the plugin's own token
+ * types, so rendering, error handling and the `katex-block` markup stay shared
+ * with `$$` rather than being reimplemented beside it.
+ */
+function addLatexDelimiters(md: MarkdownIt): void {
+	// Same slot the plugin gives `$$`, so fenced and indented code still win.
+	md.block.ruler.after('blockquote', 'atlas_math_block', latexBlockMath, {
+		alt: ['paragraph', 'reference', 'blockquote', 'list'],
+	});
+	// Before `escape`, which would otherwise eat the backslash and leave a bare
+	// bracket behind.
+	md.inline.ruler.before('escape', 'atlas_math_inline', latexInlineMath);
+}
+
+function pushMathBlock(state: StateBlock, content: string, from: number, to: number): void {
+	const token = state.push('math_block', 'math', 0);
+	token.block = true;
+	token.content = content;
+	token.map = [from, to];
+	token.markup = '\\[';
+}
+
+const latexBlockMath: BlockRule = (state, startLine, endLine, silent) => {
+	const open = state.bMarks[startLine] + state.tShift[startLine];
+	if (state.src.slice(open, open + 2) !== '\\[') {
+		return false;
+	}
+
+	const firstLine = state.src.slice(open + 2, state.eMarks[startLine]);
+	const sameLine = firstLine.indexOf('\\]');
+	if (sameLine !== -1) {
+		if (!silent) {
+			pushMathBlock(state, firstLine.slice(0, sameLine), startLine, startLine + 1);
+		}
+		state.line = startLine + 1;
+		return true;
+	}
+
+	// The closing delimiter has to turn up on a later line. An unterminated
+	// `\[` is left to render as ordinary text rather than swallowing the rest
+	// of the document.
+	let closeLine = -1;
+	let tail = '';
+	for (let next = startLine + 1; next < endLine; next++) {
+		const pos = state.bMarks[next] + state.tShift[next];
+		const max = state.eMarks[next];
+		// A non-empty line indented back out of the current block ends it.
+		if (pos < max && state.tShift[next] < state.blkIndent) {
+			break;
+		}
+		const at = state.src.slice(pos, max).indexOf('\\]');
+		if (at !== -1) {
+			closeLine = next;
+			tail = state.src.slice(pos, pos + at);
+			break;
+		}
+	}
+
+	if (closeLine === -1) {
+		return false;
+	}
+	if (!silent) {
+		pushMathBlock(
+			state,
+			(firstLine.trim() ? firstLine + '\n' : '') +
+				state.getLines(startLine + 1, closeLine, state.tShift[startLine], true) +
+				tail,
+			startLine,
+			closeLine + 1,
+		);
+	}
+	state.line = closeLine + 1;
+	return true;
+};
+
+const latexInlineMath: InlineRule = (state: StateInline, silent) => {
+	if (state.src.slice(state.pos, state.pos + 2) !== '\\(') {
+		return false;
+	}
+
+	const close = state.src.indexOf('\\)', state.pos + 2);
+	if (close === -1 || close + 2 > state.posMax) {
+		return false;
+	}
+
+	if (!silent) {
+		const token = state.push('math_inline', 'math', 0);
+		token.markup = '\\(';
+		token.content = state.src.slice(state.pos + 2, close);
+	}
+	state.pos = close + 2;
+	return true;
+};
 
 function renderFrontMatterCard(data: Map<string, string>, md: MarkdownIt): string {
 	if (data.size === 0) {

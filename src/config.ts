@@ -87,3 +87,9 @@ export async function writeTheme(themeId: string, resource?: vscode.Uri): Promis
 export async function writeCustomCss(css: string, resource?: vscode.Uri): Promise<void> {
 	await update('customCss', css, resource);
 }
+
+/** Clamped to the range the setting itself declares. */
+export async function writeLineWidth(width: number, resource?: vscode.Uri): Promise<void> {
+	const clamped = Math.min(1600, Math.max(360, Math.round(width)));
+	await update('preview.lineWidth', clamped, resource);
+}

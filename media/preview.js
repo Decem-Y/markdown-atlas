@@ -26,6 +26,7 @@
 	const customStyle = $('atlas-custom-style');
 	const cssInput = /** @type {HTMLTextAreaElement} */ ($('atlas-css-input'));
 	const zoomLabel = $('atlas-zoom-reset');
+	const widthLabel = $('atlas-width-reset');
 	const tableToggle = $('atlas-table-toggle');
 	const outlineToggle = $('atlas-outline-toggle');
 	const styleToggle = $('atlas-style-toggle');
@@ -35,7 +36,13 @@
 	const toast = $('atlas-toast');
 
 	const ZOOM_STEPS = [0.7, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2];
+	// The ends match the `preview.lineWidth` setting's own minimum and maximum,
+	// so stepping off either end is simply a no-op and needs no clamping.
+	const WIDTH_STEPS = [360, 440, 520, 600, 680, 760, 840, 920, 1040, 1200, 1400, 1600];
+	const DEFAULT_WIDTH = 760;
 	const SCROLL_ECHO_MS = 250;
+	/** How long a width change suppresses the settings echo it will cause. */
+	const WIDTH_ECHO_MS = 1000;
 	const TOAST_MS = 1800;
 
 	const restored = vscode.getState() || {};
@@ -46,6 +53,10 @@
 		/** @type {{item: Element, heading: Element}[]} */
 		outline: [],
 		zoom: typeof restored.zoom === 'number' ? restored.zoom : 1,
+		/** Mirrors `preview.lineWidth`; base.css carries the same default. */
+		lineWidth: DEFAULT_WIDTH,
+		/** Suppresses the settings echo of our own width write. */
+		widthEchoUntil: 0,
 		line: typeof restored.line === 'number' ? restored.line : 0,
 		resource: typeof restored.resource === 'string' ? restored.resource : '',
 		/** 'none' | 'outline' | 'style' */
@@ -205,6 +216,37 @@
 		const next = Math.min(ZOOM_STEPS.length - 1, Math.max(0, from + direction));
 		state.zoom = ZOOM_STEPS[next];
 		applyZoom();
+	}
+
+	/* Unlike zoom, width writes back to `preview.lineWidth`: how wide the
+	 * measure should be is a typography preference that belongs to every
+	 * preview, not a temporary way of looking at this one document. Writing it
+	 * is also what keeps `Export as HTML/PDF` in step, since the export reads
+	 * the setting rather than anything the toolbar holds. */
+	function applyWidth() {
+		document.documentElement.style.setProperty(
+			'--atlas-line-width',
+			state.lineWidth + 'px',
+		);
+		widthLabel.textContent = String(state.lineWidth);
+	}
+
+	function setLineWidth(width) {
+		state.lineWidth = width;
+		state.widthEchoUntil = Date.now() + WIDTH_ECHO_MS;
+		applyWidth();
+		vscode.postMessage({ type: 'setLineWidth', lineWidth: width });
+	}
+
+	/** Steps to the neighbouring rung, from wherever the setting actually is. */
+	function stepWidth(direction) {
+		const next =
+			direction > 0
+				? WIDTH_STEPS.find(step => step > state.lineWidth)
+				: WIDTH_STEPS.filter(step => step < state.lineWidth).pop();
+		if (next !== undefined) {
+			setLineWidth(next);
+		}
 	}
 
 	function applyCustomCss(css) {
@@ -499,6 +541,10 @@
 		applyZoom();
 	});
 
+	$('atlas-width-in').addEventListener('click', () => stepWidth(1));
+	$('atlas-width-out').addEventListener('click', () => stepWidth(-1));
+	widthLabel.addEventListener('click', () => setLineWidth(DEFAULT_WIDTH));
+
 	$('atlas-css-apply').addEventListener('click', () => {
 		const css = cssInput.value;
 		applyCustomCss(css);
@@ -547,10 +593,13 @@
 					'--atlas-font-size',
 					message.fontSize + 'px',
 				);
-				document.documentElement.style.setProperty(
-					'--atlas-line-width',
-					message.lineWidth + 'px',
-				);
+				// A write of our own comes back as a settings change; taking it
+				// would snap the toolbar back to a value the user has already
+				// stepped past.
+				if (typeof message.lineWidth === 'number' && Date.now() >= state.widthEchoUntil) {
+					state.lineWidth = message.lineWidth;
+				}
+				applyWidth();
 
 				// Only overwrite the editor while the user is not mid-edit in it.
 				const css = message.customCss || '';

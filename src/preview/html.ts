@@ -121,6 +121,13 @@ export function shellHtml(
 			<button type="button" class="atlas-tool" id="atlas-zoom-in" title="放大">+</button>
 		</span>
 
+		<span class="atlas-toolbar-group atlas-width">
+			<span class="atlas-field-label">宽</span>
+			<button type="button" class="atlas-tool" id="atlas-width-out" title="收窄正文栏">&minus;</button>
+			<button type="button" class="atlas-tool atlas-width-level" id="atlas-width-reset" title="正文栏最大宽度 —— 点击恢复默认 760px">760</button>
+			<button type="button" class="atlas-tool" id="atlas-width-in" title="加宽正文栏">+</button>
+		</span>
+
 		<span class="atlas-toolbar-spacer"></span>
 
 		<span class="atlas-menu-wrap">

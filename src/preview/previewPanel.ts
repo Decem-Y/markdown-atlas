@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { readConfig, writeCustomCss, writeTheme } from '../config';
+import { readConfig, writeCustomCss, writeLineWidth, writeTheme } from '../config';
 import { exportDocument, type ExportFormat } from '../export';
 import { render } from '../render/renderer';
 import { dirname, resolveDocumentHref, splitHref } from '../resource';
@@ -18,6 +18,7 @@ interface WebviewMessage {
 	href?: string;
 	theme?: string;
 	css?: string;
+	lineWidth?: number;
 	format?: ExportFormat;
 	outputPath?: string;
 	/** Set by the explicit sync buttons, which must win over the echo lock. */
@@ -106,7 +107,8 @@ export class PreviewPanel {
 				if (event.affectsConfiguration('markdownAtlas', this.resource)) {
 					this.postSettings();
 					// Only the render-affecting settings need a re-render; theme,
-					// custom CSS and zoom are applied by the client alone.
+					// custom CSS, zoom and line width are applied by the client
+					// alone.
 					if (
 						event.affectsConfiguration('markdownAtlas.math', this.resource) ||
 						event.affectsConfiguration(
@@ -419,6 +421,12 @@ export class PreviewPanel {
 
 			case 'setCustomCss':
 				void writeCustomCss(message.css ?? '', this.resource);
+				break;
+
+			case 'setLineWidth':
+				if (typeof message.lineWidth === 'number') {
+					void writeLineWidth(message.lineWidth, this.resource);
+				}
 				break;
 
 			case 'export':

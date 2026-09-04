@@ -112,7 +112,8 @@
 	background: var(--vscode-button-hoverBackground, #026ec1);
 }
 
-.atlas-zoom-level {
+.atlas-zoom-level,
+.atlas-width-level {
 	min-width: 48px;
 	font-variant-numeric: tabular-nums;
 }

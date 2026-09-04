@@ -84,6 +84,22 @@ suite('renderer', () => {
 		assert.ok(!render('$E = mc^2$', { ...options, math: false }).html.includes('katex'));
 	});
 
+	test('LaTeX bracket delimiters render as math too', () => {
+		const block = render('\\[\nE = mc^2\n\\]', options).html;
+		assert.ok(block.includes('katex-block'), 'display math did not render');
+
+		const oneLine = render('\\[ E = mc^2 \\]', options).html;
+		assert.ok(oneLine.includes('katex-block'), 'single-line display math did not render');
+
+		const inline = render('\u503c\u4e3a \\(x_i\\)\u3002', options).html;
+		assert.ok(inline.includes('katex'), 'inline math did not render');
+		assert.ok(!inline.includes('\\('), 'the delimiter leaked into the output');
+
+		// Disabled math leaves them alone, and an unterminated opener stays text.
+		assert.ok(!render('\\[\nE = mc^2\n\\]', { ...options, math: false }).html.includes('katex'));
+		assert.ok(!render('\\[\nE = mc^2', options).html.includes('katex'));
+	});
+
 	test('fenced code is highlighted and labelled', () => {
 		const { html } = render('```ts\nexport const a = 1;\n```', options);
 

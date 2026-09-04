@@ -2,7 +2,7 @@
   "name": "markdown-atlas",
   "displayName": "Markdown Atlas",
   "description": "给 VS Code 的 Markdown 预览换一套排版 —— 8 套主题、双向滚动同步、KaTeX 公式、代码高亮、自定义样式，导出独立 HTML 与 PDF。",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "publisher": "decemy",
   "license": "MIT",
   "icon": "icon.png",
